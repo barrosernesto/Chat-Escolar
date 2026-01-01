@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chat em tempo real para Sistemas Distribuídos e Paralelos I">
+    <meta name="theme-color" content="#667eea">
+    <title>Chat ISPPU - Comunicação em Tempo Real</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body role="application">
+    <div class="container">
+        <!-- Tela de Login -->
+        <div id="login-screen" class="login-screen" role="main">
+            <div class="login-card" role="form" aria-labelledby="login-title">
+                <div class="logo" aria-label="Logo do Chat ISPPU">
+                    <i class="fas fa-comments" aria-hidden="true"></i>
+                    <h1 id="login-title">Chat ISPPU</h1>
+                </div>
+                <p class="subtitle">Sistemas Distribuídos e Paralelos I</p>
+                
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user" aria-hidden="true"></i> Digite seu nome de usuário
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        placeholder="Ex: Balduino" 
+                        autocomplete="username"
+                        aria-required="true"
+                        aria-describedby="username-help">
+                    <small id="username-help" style="display:none;">Mínimo 2 caracteres</small>
+                </div>
+                
+                <button id="login-btn" class="btn-login" aria-label="Entrar no chat">
+                    <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Entrar no Chat
+                </button>
+                
+                <div class="instructions" role="complementary">
+                    <h3><i class="fas fa-info-circle" aria-hidden="true"></i> Funcionalidades:</h3>
+                    <ul>
+                        <li><i class="fas fa-comment" aria-hidden="true"></i> Chat público com todos</li>
+                        <li><i class="fas fa-user-secret" aria-hidden="true"></i> Mensagens privadas</li>
+                        <li><i class="fas fa-pencil-alt" aria-hidden="true"></i> Indicador "está digitando"</li>
+                        <li><i class="fas fa-users" aria-hidden="true"></i> Lista de usuários online</li>
+                        <li><i class="fas fa-database" aria-hidden="true"></i> Histórico salvo</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Principal (escondido inicialmente) -->
+        <div id="chat-container" class="chat-container hidden" role="main" aria-labelledby="chat-title">
+            <div class="chat-header" role="banner">
+                <div class="header-left">
+                    <i class="fas fa-comments" aria-hidden="true"></i>
+                    <h2 id="chat-title">Chat Distribuído</h2>
+                </div>
+                <div class="header-right">
+                    <span id="current-user" class="current-user" role="status" aria-live="polite"></span>
+                    <button id="logout-btn" class="btn-logout" title="Sair do chat" aria-label="Desconectar">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-body">
+                <!-- Painel de Usuários Online -->
+                <aside class="users-panel" aria-label="Usuários online">
+                    <div class="panel-header">
+                        <h3>
+                            <span><i class="fas fa-users" aria-hidden="true"></i> Online</span>
+                            <span id="online-count" class="badge" aria-live="polite">0</span>
+                        </h3>
+                    </div>
+                    <div id="online-users" class="users-list" role="list">
+                        <!-- Usuários aparecerão aqui -->
+                    </div>
+                    <div class="typing-indicator-container" role="status" aria-live="polite">
+                        <div id="typing-indicator" class="typing-indicator hidden">
+                            <span id="typing-user"></span> está digitando...
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Área de Chat -->
+                <div class="chat-area" role="region" aria-label="Área de chat">
+                    <!-- Abas de Chat -->
+                    <div class="chat-tabs">
+                        <div class="tabs" role="tablist">
+                            <button id="tab-all" class="tab active" data-tab="all" role="tab" aria-selected="true" aria-controls="chat-all">
+                                <i class="fas fa-globe" aria-hidden="true"></i> Chat Geral
+                            </button>
+                            <button id="tab-private" class="tab" data-tab="private" role="tab" aria-selected="false" aria-controls="chat-private">
+                                <i class="fas fa-user-secret" aria-hidden="true"></i> Privado
+                            </button>
+                        </div>
+                        <div class="tab-content">
+                            <!-- Chat Geral -->
+                            <div id="chat-all" class="chat-messages active" role="tabpanel" aria-labelledby="tab-all">
+                                <div id="messages-all" class="messages-container" role="log" aria-live="polite" aria-label="Mensagens do chat geral">
+                                    <!-- Mensagens gerais aparecerão aqui -->
+                                </div>
+                                <div class="message-input">
+                                    <input 
+                                        type="text" 
+                                        id="message-input-all" 
+                                        placeholder="Digite sua mensagem para todos..." 
+                                        autocomplete="off"
+                                        aria-label="Campo de mensagem pública">
+                                    <button id="send-all" class="btn-send" aria-label="Enviar mensagem pública">
+                                        <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Chat Privado -->
+                            <div id="chat-private" class="chat-messages" role="tabpanel" aria-labelledby="tab-private">
+                                <div class="private-header">
+                                    <h4 id="private-with">Chat com: <span>Nenhum usuário selecionado</span></h4>
+                                    <button id="close-private" class="btn-close" title="Fechar chat privado" aria-label="Fechar conversa privada">
+                                        <i class="fas fa-times" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div id="messages-private" class="messages-container" role="log" aria-live="polite" aria-label="Mensagens do chat privado">
+                                    <!-- Mensagens privadas aparecerão aqui -->
+                                </div>
+                                <div class="message-input">
+                                    <input 
+                                        type="text" 
+                                        id="message-input-private" 
+                                        placeholder="Digite sua mensagem privada..." 
+                                        autocomplete="off"
+                                        disabled
+                                        aria-label="Campo de mensagem privada">
+                                    <button id="send-private" class="btn-send" disabled aria-label="Enviar mensagem privada">
+                                        <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notificações -->
+            <div id="notifications" class="notifications" role="region" aria-label="Notificações" aria-live="assertive"></div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
